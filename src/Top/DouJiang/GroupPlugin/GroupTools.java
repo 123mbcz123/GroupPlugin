@@ -23,6 +23,16 @@ public class GroupTools {
      都会返回 false
      */
     public static boolean isInGroup(String id,String GroupId){
+        GroupClass gc=GetGroup(GroupId);
+        if(gc==null){
+            return false;
+        }
+        Set<String > MemberSet=gc.getMember_Set();
+        for(String s:MemberSet){
+            if(s.equalsIgnoreCase(id)){
+                return true;
+            }
+        }
         return false;
     }
 
@@ -37,8 +47,7 @@ public class GroupTools {
         GroupClass gc=null;
         gc=ReadGroupClassFromRedis(GroupId);
         if(gc==null){
-           // gc=ReadGroupClassFromMysql(GroupId);
-            gc=ReadGroupClassToRedisFromMysql(GroupId);
+            gc=ReadGroupClassFromMysql(GroupId);
         }
         return gc;
     }
@@ -73,7 +82,7 @@ public class GroupTools {
         ObjectInputStream in =null;
         Object obj =null;
         try {
-            ps=pool.getPrepareStatement("select * from Group where Group_Id=?;");
+            ps=pool.getPrepareStatement("select * from Groups where Group_Id=?;");
             ps.setString(1,GroupId);
             rs=ps.executeQuery();
             if(rs.next()){
@@ -110,8 +119,58 @@ public class GroupTools {
         }
         return null;
     }
+    public static void SaveToRedis(GroupClass gc){
 
-    public static void SendMessage(String Msg,Sockets s){
-        s.Send(Msg);
     }
+    /*
+    更新群主信息
+     */
+    public static int UpdateGroupMasterMysql(String GroupId,String Master){
+        ConnectionPool.PooledConnection pool=StaticMap.pool;
+        PreparedStatement ps=null;
+        try {
+            ps=pool.getPrepareStatement("update groups set Group_Master=? where Group_Id=?;");
+            ps.setString(1,Master);
+            ps.setString(2,GroupId);
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+         return -1;
+    }
+    /*
+    更新群成员列表
+     */
+    public static int UpdateGroupMemberMysql(String GroupId,Set<String> Member_Set){
+        ConnectionPool.PooledConnection pool=StaticMap.pool;
+        PreparedStatement ps=null;
+        try {
+            ps=pool.getPrepareStatement("update groups set Group_Member=? where Group_Id=?;");
+            ps.setObject(1,Member_Set);
+            ps.setString(2,GroupId);
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+    /*
+    更新群管理列表
+     */
+    public static int UpdateGroupManagerMysql(String GroupId,Set<String> Manager_Set){
+        ConnectionPool.PooledConnection pool=StaticMap.pool;
+        PreparedStatement ps=null;
+        try {
+            ps=pool.getPrepareStatement("update groups set Group_Manager=? where Group_Id=?;");
+            ps.setObject(1,Manager_Set);
+            ps.setString(2,GroupId);
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+    /*
+
+     */
 }

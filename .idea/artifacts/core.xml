@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="core">
+    <output-path>$PROJECT_DIR$/../PServerProject/plugin/QQGroup</output-path>
+    <root id="archive" name="core.jar">
+      <element id="module-output" name="GroupPlugin" />
+    </root>
+  </artifact>
+</component>

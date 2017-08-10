@@ -9,11 +9,12 @@ public class SaveGroupToMysql extends Thread{
     数据将从Redis --> Mysql
     数据并不会从Redis卸载
      */
-    private String GroupId=null;
+    private GroupClass gc=null;
     public void run(){
+
     }
-    public SaveGroupToMysql(String GroupId){
-        this.GroupId=GroupId;
+    public SaveGroupToMysql(GroupClass gc){
+        this.gc=gc;
     }
 
 }
